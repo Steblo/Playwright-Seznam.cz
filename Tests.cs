@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using Microsoft.Playwright;
+using System.Text.RegularExpressions;
 using TestProject3.Pages;
 
 namespace TestProject3
@@ -52,6 +53,16 @@ namespace TestProject3
             await Expect(homePage.WeatherLocator.Last).ToHaveTextAsync(new Regex(@"\d"));
 
             await Expect(homePage.WeatherLocator.Nth(3)).ToHaveTextAsync(new Regex(@"\d"));
+        }
+
+        [TestMethod]
+        public async Task SearchSeznam()
+        {
+            var searachPage = await homePage.SearchAsync("Playwright");
+
+            await Expect(searachPage._page).ToHaveURLAsync(new Regex("https://search.seznam.cz/"));
+
+            await Expect(searachPage.ResultsLocator.First).ToHaveTextAsync(new Regex(@"playwright.dev"));
         }
     }
 }

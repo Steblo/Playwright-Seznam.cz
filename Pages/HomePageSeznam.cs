@@ -10,6 +10,7 @@ namespace TestProject3.Pages
         public ILocator MainContentLocator => _page.Locator("id=hl-obsah");
         public ILocator ServicesLocator => _page.Locator(".h-full.d-flex.align-items-end.font-12.line-height-14.text-center.atm-service-dashboard-badge__title");
         public ILocator WeatherLocator => _page.Locator(".atm-weather-item__temp-value");
+        public ILocator SearchInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Vyhledat" });
 
         public async Task GotoAsync()
         {
@@ -27,6 +28,15 @@ namespace TestProject3.Pages
         public async Task Close()
         {
             await _page.CloseAsync();
+        }
+
+        public async Task<SearchPageSeznam> SearchAsync(string searchText)
+        {
+            await SearchInput.ClickAsync();
+            await SearchInput.FillAsync(searchText);
+            await SearchInput.PressAsync("Enter");
+
+            return new SearchPageSeznam(_page);
         }
     }
 }
