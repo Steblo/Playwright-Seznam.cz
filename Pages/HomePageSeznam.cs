@@ -11,6 +11,9 @@ namespace TestProject3.Pages
         public ILocator ServicesLocator => _page.Locator(".h-full.d-flex.align-items-end.font-12.line-height-14.text-center.atm-service-dashboard-badge__title");
         public ILocator WeatherLocator => _page.Locator(".atm-weather-item__temp-value");
         public ILocator SearchInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Vyhledat" });
+        private ILocator SearchTab => _page.Locator(".ogm-search__tabs");
+        public ILocator SearchTabs => SearchTab.Locator("li");
+        public ILocator NameDay => _page.GetByRole(AriaRole.Link, new() { Name = "Kateřina" });
 
         public async Task GotoAsync()
         {

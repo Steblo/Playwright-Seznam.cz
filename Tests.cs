@@ -1,6 +1,6 @@
-﻿using Microsoft.Playwright;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using TestProject3.Pages;
+[assembly: Parallelize(Workers = 4, Scope = ExecutionScope.MethodLevel)]
 
 namespace TestProject3
 {
@@ -63,6 +63,18 @@ namespace TestProject3
             await Expect(searachPage._page).ToHaveURLAsync(new Regex("https://search.seznam.cz/"));
 
             await Expect(searachPage.ResultsLocator.First).ToHaveTextAsync(new Regex(@"playwright.dev"));
+        }
+
+        [TestMethod]
+        public async Task SearchTabsSeznam()
+        {
+            await Expect(homePage.SearchTabs).ToHaveCountAsync(8);
+        }
+
+        [TestMethod]
+        public async Task NameDaySeznam()
+        {
+            await Expect(homePage.NameDay).ToContainTextAsync("Kateřina");
         }
     }
 }
