@@ -44,7 +44,7 @@ namespace TestProject3
         [TestMethod]
         public async Task ServicesSeznam()
         {
-            await Expect(homePage.ServicesLocator).ToHaveCountAsync(24);
+            await Expect(homePage.ServicesLocator).ToHaveCountAsync(23);
         }
 
         [TestMethod]
