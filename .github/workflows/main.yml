@@ -1,0 +1,42 @@
+name: Playwright Tests
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 5 * * *"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Install PowerShell
+        uses: PowerShell/PowerShell@v1
+        with:
+          version: '7.4.1'
+
+      - name: Restore dependencies
+        run: dotnet restore ./TestProject3.csproj
+
+      - name: Build project
+        run: dotnet build ./TestProject3.csproj
+
+      - name: Install Playwright browsers
+        run: pwsh ./bin/Debug/net8.0/playwright.ps1 install --with-deps
+
+      - name: Run tests
+        run: dotnet test ./TestProject3.csproj --logger "trx"
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: ./TestResults
