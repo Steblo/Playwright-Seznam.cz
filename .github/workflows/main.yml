@@ -2,7 +2,7 @@ name: Daily Playwright Tests
 
 on:
   schedule:
-    - cron: "0 5 * * *"   # 7:00 CEST = 5:00 UTC
+    - cron: "0 5 * * *"
   workflow_dispatch:
 
 jobs:
@@ -21,11 +21,11 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Install Playwright CLI
-        run: dotnet tool install --global Microsoft.Playwright.CLI
+      - name: Build project
+        run: dotnet build
 
       - name: Install Playwright browsers
-        run: playwright install --with-deps
+        run: dotnet playwright install --with-deps
 
       - name: Run tests
         run: dotnet test --logger "trx"
