@@ -27,11 +27,18 @@ jobs:
       - name: Install Playwright browsers
         run: pwsh ./bin/Debug/net8.0/playwright.ps1 install --with-deps
 
-      - name: Run tests
-        run: dotnet test ./TestProject3.csproj --logger "trx"
+      - name: Run tests and generate TRX
+        run: dotnet test ./TestProject3.csproj --logger "trx;LogFileName=test_results.trx"
 
-      - name: Upload test results
+      - name: Upload TRX results
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: ./TestResults
+          path: ./TestResults/**/*.trx
+
+      - name: Send results to Power Automate
+        run: |
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d "{\"status\":\"completed\",\"timestamp\":\"$(date)\",\"workflow\":\"Playwright Tests\"}" \
+            ${{ secrets.PA_WEBHOOK_URL }}
