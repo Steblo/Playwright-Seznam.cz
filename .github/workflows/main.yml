@@ -35,10 +35,3 @@ jobs:
         with:
           name: test-results
           path: ./TestResults/**/*.trx
-
-      - name: Send results to Power Automate
-        run: |
-          curl -X POST \
-            -H "Content-Type: application/json" \
-            -d "{\"status\":\"completed\",\"timestamp\":\"$(date)\",\"workflow\":\"Playwright Tests\"}" \
-            ${{ secrets.PA_WEBHOOK_URL }}
