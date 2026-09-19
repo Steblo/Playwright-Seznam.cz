@@ -1,6 +1,6 @@
 ﻿using Microsoft.Playwright;
 
-namespace TestProject3.Pages
+namespace Pages
 {
     public class SearchPageSeznam(IPage page)
     {

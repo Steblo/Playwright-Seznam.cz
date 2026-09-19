@@ -1,8 +1,8 @@
 ﻿using Microsoft.Playwright;
 using System.Text.RegularExpressions;
-using TestProject3.Pages;
+using Pages;
 
-namespace TestProject3
+namespace Tests
 {
     [TestClass]
     public class Seznam
@@ -31,30 +31,35 @@ namespace TestProject3
         }
 
         [TestMethod]
+        [Priority(1)]
         public async Task UrlSeznam()
         {
             await Assertions.Expect(homePage._page).ToHaveURLAsync(new Regex("https://www.seznam.cz"));
         }
 
         [TestMethod]
+        [Priority(2)]
         public async Task LogoSeznam()
         {
             await Assertions.Expect(homePage.LogoLocator).ToHaveCountAsync(4);
         }
 
         [TestMethod]
+        [Priority(3)]
         public async Task MainpageSeznam()
         {
             await Assertions.Expect(homePage.MainContentLocator).ToBeVisibleAsync();
         }
 
         [TestMethod]
+        [Priority(4)]
         public async Task ServicesSeznam()
         {
             await Assertions.Expect(homePage.ServicesLocator).ToHaveCountAsync(23);
         }
 
         [TestMethod]
+        [Priority(5)]
         public async Task WeatherNowAndTodaySeznam()
         {
             await Assertions.Expect(homePage.WeatherLocator.Last).ToHaveTextAsync(new Regex(@"\d"));
@@ -63,6 +68,7 @@ namespace TestProject3
         }
 
         [TestMethod]
+        [Priority(6)]
         public async Task SearchSeznam()
         {
             var searachPage = await homePage.SearchAsync("Playwright");
