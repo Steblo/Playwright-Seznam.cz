@@ -14,6 +14,3 @@ Projekt obsahuje MSTest testy seřazené pomocí `Priority` a CI pipeline běž�
 - TRX test artefakty
 
 ---
-
-## 📁 Struktura projektu
-
