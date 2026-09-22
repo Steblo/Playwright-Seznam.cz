@@ -27,6 +27,11 @@ jobs:
       - name: Install Playwright browsers
         run: pwsh ./bin/Debug/net9.0/playwright.ps1 install --with-deps
 
+      - name: Clean old traces & screenshots
+        run: |
+          rm -rf traces
+          rm -rf test-results/screenshots
+
       - name: Run tests and generate TRX
         run: dotnet test ./Playwright-Seznam.cz.csproj --logger "trx;LogFileName=test_results.trx"
 
@@ -35,3 +40,17 @@ jobs:
         with:
           name: test-results
           path: ./TestResults/**/*.trx
+
+      - name: Upload traces (only if exist)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: traces
+          path: traces
+
+      - name: Upload screenshots (only if exist)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: test-results/screenshots
