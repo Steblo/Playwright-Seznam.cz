@@ -6,6 +6,7 @@ namespace Pages
     {
         public readonly IPage _page = page;
 
+        public IPage Page => _page;
         public ILocator LogoLocator => _page.GetByAltText("Seznam.cz - hlavní strana");
         public ILocator MainContentLocator => _page.GetByRole(AriaRole.Heading, new() { Level = 6,  Name = "Hlavní obsah" });
         public ILocator ServicesLocator => _page.Locator(".h-full.d-flex.align-items-end.font-12.line-height-14.text-center.atm-service-dashboard-badge__title");

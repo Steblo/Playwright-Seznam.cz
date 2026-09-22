@@ -1,5 +1,5 @@
-﻿using Microsoft.Playwright;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using Microsoft.Playwright;
 using Pages;
 
 namespace Tests
@@ -7,34 +7,83 @@ namespace Tests
     [TestClass]
     public class Seznam
     {
+        public TestContext TestContext { get; set; } = default!;
+
+        private static IPlaywright? _playwright;
+        private static IBrowser? _browser;
+        private static IBrowserContext? _context;
         private HomePageSeznam homePage = null!;
+
+        [ClassInitialize]
+        public static async Task ClassSetup(TestContext context)
+        {
+            _playwright = await Playwright.CreateAsync();
+            _browser = await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+            {
+                Headless = true
+            });
+            _context = await _browser!.NewContextAsync();
+        }
+
 
         [TestInitialize]
         public async Task Setup()
         {
-            var playwright = await Playwright.CreateAsync();
-            var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+            var context = await _browser!.NewContextAsync();
+
+            await context.Tracing.StartAsync(new TracingStartOptions
             {
-                Headless = true,
-                //SlowMo = 100
+                Screenshots = true,
+                Snapshots = true,
+                Sources = true
             });
 
-            homePage = new HomePageSeznam(await browser.NewPageAsync());
+            homePage = new HomePageSeznam(await context.NewPageAsync());
             await homePage.GotoAsync();
             await homePage.ConsentAsync();
+        }
+
+        [ClassCleanup]
+        public static async Task ClassTeardown()
+        {
+            await _browser!.CloseAsync();
+            _playwright!.Dispose();
         }
 
         [TestCleanup]
         public async Task Teardown()
         {
-            await homePage.Close();
+            var testName = TestContext?.TestName ?? "UnknownTest";
+            await homePage.Page.ScreenshotAsync(new() { Path = $"screenshots/{testName}.png" });
+
+            if (TestContext!.CurrentTestOutcome != UnitTestOutcome.Passed)
+            {
+                await _context!.Tracing.StopAsync(new TracingStopOptions
+                {
+                    Path = $"traces/{testName}.zip"
+                });
+            }
+            else
+            {
+                await _context!.Tracing.StopAsync();
+            }
+
+            await homePage.Page.Context.Tracing.StopAsync(new TracingStopOptions
+            {
+                Path = $"traces/{testName}.zip"
+            });
+
+            foreach (var page in _context.Pages)
+            {
+                await page.CloseAsync();
+            }
         }
 
         [TestMethod]
         [Priority(1)]
         public async Task UrlSeznam()
         {
-            await Assertions.Expect(homePage._page).ToHaveURLAsync(new Regex("https://www.seznam.cz"));
+            await Assertions.Expect(homePage.Page).ToHaveURLAsync(new Regex("https://www.seznam.cz"));
         }
 
         [TestMethod]
@@ -73,9 +122,9 @@ namespace Tests
         {
             var searachPage = await homePage.SearchAsync("Playwright");
 
-            await Assertions.Expect(searachPage._page).ToHaveURLAsync(new Regex("https://search.seznam.cz/"));
+            await Assertions.Expect(searachPage.Page).ToHaveURLAsync(new Regex("https://search.seznam.cz/"));
 
-            await Assertions.Expect(searachPage.ResultsLocator.First).ToHaveTextAsync(new Regex(@"playwright.dev"));
+            await Assertions.Expect(searachPage.ResultsLocator.First).ToContainTextAsync("playwright.dev");
         }
     }
 }
